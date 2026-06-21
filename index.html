@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auronzo di Cadore — a history from the rock up</title>
+<meta name="description" content="The long history of Auronzo di Cadore in the Dolomites: how the valley was ruled and how its people lived, from the first hunters to the diaspora.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ---------- tokens ---------- */
+  :root{
+    --limestone:#e8e6de;     /* page background: cool dolomite limestone */
+    --parchment:#f2f0e8;      /* raised surfaces */
+    --ink:#22272a;            /* primary text: cool slate near-black */
+    --slate:#525c5d;          /* secondary text */
+    --lake:#1e6f74;           /* primary accent: glacial petrol-teal (Santa Caterina) */
+    --lake-deep:#154b4f;
+    --ore:#8c4a2f;            /* secondary accent: oxidized iron / galena-sienna, used rarely */
+    --moss:#4c5a43;           /* spruce forest */
+    --line:rgba(34,39,42,.14);
+    --line-strong:rgba(34,39,42,.28);
+    --maxprose:40rem;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0;background:var(--limestone);color:var(--ink);
+    font-family:"Spectral",Georgia,serif;font-weight:400;
+    font-size:clamp(1.02rem,.62rem + .9vw,1.18rem);line-height:1.62;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:rgba(30,111,116,.22)}
+  a{color:var(--lake-deep);text-underline-offset:.18em;text-decoration-thickness:.06em}
+  a:hover{color:var(--ore)}
+  :focus-visible{outline:2.5px solid var(--lake);outline-offset:3px;border-radius:2px}
+
+  .display{font-family:"Cinzel",serif;font-weight:500;letter-spacing:.02em}
+  .eyebrow{
+    font-family:"Cinzel",serif;font-weight:500;letter-spacing:.16em;
+    text-transform:uppercase;font-size:.72rem;color:var(--lake-deep);
+  }
+  .util{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+
+  /* ---------- mobile contents bar (hidden on desktop) ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:.6rem;
+    padding:.55rem .9rem;background:rgba(232,230,222,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  }
+  .topbar .mark{font-family:"Cinzel",serif;font-weight:600;font-size:.82rem;letter-spacing:.06em}
+  .topbar details{margin-left:auto}
+  .topbar summary{
+    list-style:none;cursor:pointer;font-family:system-ui,sans-serif;font-size:.78rem;
+    color:var(--lake-deep);border:1px solid var(--line-strong);border-radius:999px;padding:.25rem .7rem;
+  }
+  .topbar summary::-webkit-details-marker{display:none}
+  .topbar .menu{
+    position:absolute;right:.6rem;top:2.7rem;background:var(--parchment);
+    border:1px solid var(--line-strong);border-radius:10px;padding:.4rem;
+    box-shadow:0 14px 40px rgba(0,0,0,.16);min-width:15rem;max-height:70vh;overflow:auto;
+  }
+  .topbar .menu a{display:block;padding:.4rem .55rem;border-radius:6px;text-decoration:none;
+    color:var(--ink);font-size:.9rem}
+  .topbar .menu a:hover{background:rgba(30,111,116,.1)}
+  @media (min-width:1000px){.topbar{display:none}}
+
+  /* ---------- shell ---------- */
+  .shell{max-width:74rem;margin:0 auto;padding:0 clamp(1rem,3vw,2rem)}
+  .layout{display:block}
+  @media (min-width:1000px){
+    .layout{display:grid;grid-template-columns:13.5rem 1fr;gap:clamp(1.5rem,3vw,3rem);align-items:start}
+  }
+
+  /* ---------- stratigraphic rail (the signature) ---------- */
+  .rail{display:none}
+  @media (min-width:1000px){
+    .rail{
+      display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
+      padding:1.1rem 0;border-right:1px solid var(--line);
+    }
+    .rail .railhead{font-family:"Cinzel",serif;font-size:.62rem;letter-spacing:.18em;
+      text-transform:uppercase;color:var(--slate);padding:0 0 .5rem .1rem}
+    .strata{display:flex;flex-direction:column;flex:1;gap:2px;min-height:0;overflow-y:auto;scrollbar-width:thin}
+    .stratum{
+      flex:0 0 auto;min-height:2.3rem;display:flex;align-items:center;gap:.55rem;text-decoration:none;
+      color:var(--ink);padding:.18rem .35rem;border-radius:3px;position:relative;transition:background .25s ease;
+    }
+    .stratum .swatch{width:9px;align-self:stretch;border-radius:2px;flex:0 0 auto;
+      box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+    .stratum .lab{min-width:0;display:flex;flex-direction:column;justify-content:center;gap:1px}
+    .stratum .name{font-size:.78rem;line-height:1.12;letter-spacing:.005em;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .stratum .yrs{font-family:system-ui,sans-serif;font-size:.62rem;color:var(--slate);
+      letter-spacing:.02em;white-space:nowrap}
+    .stratum:hover{background:rgba(30,111,116,.08)}
+    .stratum.active{background:rgba(30,111,116,.14)}
+    .stratum.active .name{color:var(--lake-deep);font-weight:600}
+    .stratum.active .swatch{box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),0 0 0 2px var(--lake)}
+    .stratum.thread{margin-top:.2rem}
+    .stratum.thread .name{font-style:italic;color:var(--ore)}
+    .stratum.thread .yrs{font-style:italic}
+    .stratum.thread.active .name{color:var(--ore);font-weight:600}
+    .stratum.thread.active .swatch{box-shadow:inset 0 0 0 1px rgba(0,0,0,.12),0 0 0 2px var(--ore)}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{padding:clamp(2.6rem,8vh,5rem) 0 clamp(1.5rem,5vh,3rem)}
+  .hero .place{font-family:system-ui,sans-serif;font-size:.74rem;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--slate)}
+  .hero h1{
+    font-family:"Cinzel",serif;font-weight:600;line-height:1.02;margin:.5rem 0 .2rem;
+    font-size:clamp(2.3rem,1.2rem + 5.2vw,4.4rem);letter-spacing:.01em;
+  }
+  .hero .ladin{font-style:italic;color:var(--ore);font-size:clamp(1.05rem,.9rem + .6vw,1.4rem);
+    margin:.1rem 0 1.2rem}
+  .hero .locate{font-size:clamp(1.05rem,.95rem + .5vw,1.32rem);max-width:34rem;color:var(--ink)}
+  .hero .thesis{max-width:var(--maxprose);margin-top:1.1rem;color:var(--ink)}
+  .epigraph{margin-top:1.8rem;padding-left:1rem;border-left:2px solid var(--ore);
+    max-width:30rem;font-style:italic;color:var(--slate);font-size:.98rem;line-height:1.5}
+  .epigraph cite{display:block;font-style:normal;font-family:system-ui,sans-serif;
+    font-size:.72rem;letter-spacing:.04em;color:var(--slate);margin-top:.4rem}
+  .dedication{margin-top:2.2rem;font-family:"Cinzel",serif;font-size:.86rem;letter-spacing:.04em;
+    color:var(--lake-deep)}
+
+  /* ---------- era sections ---------- */
+  .era{padding:clamp(2.2rem,6vh,3.6rem) 0;border-top:1px solid var(--line);scroll-margin-top:3.5rem}
+  .era:first-of-type{border-top:none}
+  .era .meta{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .9rem;margin-bottom:.5rem}
+  .era .years{font-family:system-ui,sans-serif;font-size:.74rem;letter-spacing:.06em;
+    color:var(--slate);padding:.12rem .5rem;border:1px solid var(--line-strong);border-radius:999px}
+  .era h2{font-weight:600;font-size:clamp(1.5rem,1.1rem + 1.6vw,2.15rem);line-height:1.12;
+    margin:.15rem 0 .9rem;letter-spacing:.005em}
+  .era p{max-width:var(--maxprose);margin:0 0 1rem}
+  .era p:last-child{margin-bottom:0}
+  .era.thematic .eyebrow{color:var(--ore)}
+  .era.thematic h2{font-style:italic}
+
+  .rule{font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.05em;color:var(--slate)}
+  .flag{font-size:.92rem;color:var(--slate);font-style:italic;max-width:var(--maxprose)}
+
+  /* governance/economy ledger */
+  .ledger{max-width:var(--maxprose);margin:1.3rem 0 .2rem;border-top:1px solid var(--line);
+    display:grid;grid-template-columns:1fr;gap:0}
+  .ledger .row{display:grid;grid-template-columns:7.5rem 1fr;gap:.6rem 1rem;
+    padding:.6rem 0;border-bottom:1px solid var(--line)}
+  .ledger .k{font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--lake-deep);padding-top:.18rem}
+  .ledger .v{font-size:.98rem;line-height:1.5}
+  @media (max-width:430px){.ledger .row{grid-template-columns:1fr;gap:.15rem}}
+
+  /* pulled stone detail */
+  .stone{max-width:var(--maxprose);margin:1.3rem 0;background:var(--parchment);
+    border:1px solid var(--line);border-left:3px solid var(--lake);border-radius:4px;
+    padding:1rem 1.15rem}
+  .stone.ore{border-left-color:var(--ore)}
+  .stone .lab{font-family:"Cinzel",serif;font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--lake-deep);margin-bottom:.35rem}
+  .stone.ore .lab{color:var(--ore)}
+  .stone p{margin:0;font-size:.98rem;line-height:1.55}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+  /* ---------- kids' triptych ---------- */
+  .kids{padding:clamp(2.4rem,6vh,3.8rem) 0;border-top:1px solid var(--line)}
+  .kids .head{max-width:var(--maxprose)}
+  .kids h2{font-weight:600;font-size:clamp(1.5rem,1.1rem + 1.6vw,2.15rem);margin:.3rem 0 .5rem}
+  .kids .head p{max-width:var(--maxprose)}
+  .kids .tag{font-family:system-ui,sans-serif;font-size:.7rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ore)}
+  .panels{display:grid;grid-template-columns:1fr;gap:1.5rem;margin-top:1.8rem}
+  @media (min-width:760px){.panels{grid-template-columns:repeat(3,1fr);gap:1.3rem}}
+  .panel{background:var(--parchment);border:1px solid var(--line);border-radius:8px;overflow:hidden;
+    display:flex;flex-direction:column}
+  .panel svg{display:block;width:100%;height:auto;background:#eef2ee}
+  .panel .body{padding:.95rem 1.05rem 1.15rem}
+  .panel .when{font-family:"Cinzel",serif;font-weight:600;font-size:1rem;letter-spacing:.02em;margin:0}
+  .panel .yrs{font-family:system-ui,sans-serif;font-size:.68rem;letter-spacing:.05em;color:var(--slate);
+    margin:.1rem 0 .6rem}
+  .panel .cap{font-size:.96rem;line-height:1.5;margin:0 0 .7rem}
+  .panel .boss{font-size:.9rem;line-height:1.45;margin:0;padding-top:.6rem;border-top:1px solid var(--line)}
+  .panel .boss b{font-family:system-ui,sans-serif;font-size:.66rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--lake-deep);font-weight:600;display:block;margin-bottom:.15rem}
+
+  /* ---------- sources ---------- */
+  .sources{padding:clamp(2.4rem,6vh,3.6rem) 0 4rem;border-top:1px solid var(--line)}
+  .sources h2{font-weight:600;font-size:1.5rem;margin:.3rem 0 .6rem}
+  .sources p{max-width:var(--maxprose)}
+  .sources ul{max-width:var(--maxprose);padding-left:1.1rem;margin:1rem 0 0}
+  .sources li{margin:.35rem 0;font-size:.95rem;line-height:1.5}
+  .colophon{max-width:var(--maxprose);margin-top:2rem;font-size:.85rem;color:var(--slate);
+    font-family:system-ui,sans-serif;line-height:1.55}
+
+  footer{border-top:1px solid var(--line);padding:1.6rem 0 3rem}
+  footer .shell{font-family:system-ui,sans-serif;font-size:.78rem;color:var(--slate);
+    display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;justify-content:space-between}
+</style>
+</head>
+<body>
+
+<!-- mobile contents -->
+<div class="topbar">
+  <span class="mark">AURONZO</span>
+  <details>
+    <summary>Contents</summary>
+    <nav class="menu">
+      <a href="#deeptime">Deep time</a>
+      <a href="#hunters">The first people</a>
+      <a href="#veneti">Veneti &amp; Catubrini</a>
+      <a href="#rome">Under Rome</a>
+      <a href="#patriarch">The Patriarch's land</a>
+      <a href="#statutes">The Statutes of 1338</a>
+      <a href="#venice">Under Venice</a>
+      <a href="#empires">Empires &amp; borders</a>
+      <a href="#italy">Into Italy</a>
+      <a href="#war">The mountains at war</a>
+      <a href="#fascism">Between the wars</a>
+      <a href="#occupation">Occupation &amp; Resistance</a>
+      <a href="#exodus">The valley empties</a>
+      <a href="#trades">Glasses, and visitors</a>
+      <a href="#women">The valley run by women</a>
+      <a href="#now">The valley now</a>
+      <a href="#kids">For younger readers</a>
+      <a href="#sources">Where this comes from</a>
+    </nav>
+  </details>
+</div>
+
+<div class="shell">
+<div class="layout">
+
+  <!-- STRATIGRAPHIC RAIL -->
+  <aside class="rail" aria-label="Timeline by era, oldest at top">
+    <div class="railhead">Deepest&nbsp;time&nbsp;above</div>
+    <nav class="strata">
+      <a class="stratum" href="#deeptime"><span class="swatch" style="background:#6a7370"></span><span class="lab"><span class="name">The rock &amp; the ice</span><span class="yrs">before 8000 BCE</span></span></a>
+      <a class="stratum" href="#hunters"><span class="swatch" style="background:#717a72"></span><span class="lab"><span class="name">The first people</span><span class="yrs">~8000 BCE</span></span></a>
+      <a class="stratum" href="#veneti"><span class="swatch" style="background:#5f6e58"></span><span class="lab"><span class="name">Veneti &amp; Catubrini</span><span class="yrs">600–200 BCE</span></span></a>
+      <a class="stratum" href="#rome"><span class="swatch" style="background:#6f6a51"></span><span class="lab"><span class="name">Under Rome</span><span class="yrs">2c BCE–5c CE</span></span></a>
+      <a class="stratum" href="#patriarch"><span class="swatch" style="background:#5b696c"></span><span class="lab"><span class="name">The Patriarch's land</span><span class="yrs">5c–1335</span></span></a>
+      <a class="stratum" href="#statutes"><span class="swatch" style="background:#4f6f6a"></span><span class="lab"><span class="name">The Statutes of 1338</span><span class="yrs">1338–1420</span></span></a>
+      <a class="stratum" href="#venice"><span class="swatch" style="background:#3f6e72"></span><span class="lab"><span class="name">Under Venice</span><span class="yrs">1420–1797</span></span></a>
+      <a class="stratum" href="#empires"><span class="swatch" style="background:#6b5f57"></span><span class="lab"><span class="name">Empires &amp; borders</span><span class="yrs">1797–1866</span></span></a>
+      <a class="stratum" href="#italy"><span class="swatch" style="background:#5a6660"></span><span class="lab"><span class="name">Into Italy</span><span class="yrs">1866–1914</span></span></a>
+      <a class="stratum" href="#war"><span class="swatch" style="background:#7a5447"></span><span class="lab"><span class="name">The mountains at war</span><span class="yrs">1915–1918</span></span></a>
+      <a class="stratum" href="#fascism"><span class="swatch" style="background:#6e6450"></span><span class="lab"><span class="name">Between the wars</span><span class="yrs">1918–1943</span></span></a>
+      <a class="stratum" href="#occupation"><span class="swatch" style="background:#5c4a44"></span><span class="lab"><span class="name">Occupation &amp; Resistance</span><span class="yrs">1943–1945</span></span></a>
+      <a class="stratum" href="#exodus"><span class="swatch" style="background:#566a66"></span><span class="lab"><span class="name">The valley empties</span><span class="yrs">1945–1970s</span></span></a>
+      <a class="stratum" href="#trades"><span class="swatch" style="background:#2a8085"></span><span class="lab"><span class="name">Glasses, and visitors</span><span class="yrs">1960s–today</span></span></a>
+      <a class="stratum thread" href="#women"><span class="swatch" style="background:#8c4a2f"></span><span class="lab"><span class="name">Run by women</span><span class="yrs">every era</span></span></a>
+      <a class="stratum" href="#now"><span class="swatch" style="background:#2f6b6f"></span><span class="lab"><span class="name">The valley now</span><span class="yrs">today</span></span></a>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- HERO -->
+    <header class="hero" id="top">
+      <p class="place">Province of Belluno · Veneto · the Dolomites</p>
+      <h1>Auronzo<br>di Cadore</h1>
+      <p class="ladin">Aurònzo · Aurònze <span class="util" style="font-style:normal;font-size:.7rem;letter-spacing:.08em;color:var(--slate)">— in Ladin</span></p>
+      <p class="locate">A valley on the river Ansiei, beneath the Tre Cime di Lavaredo.</p>
+      <p class="thesis">The people of this valley have been Veneti, subjects of a patriarch, citizens of their own mountain community, Venetians, Austrians — and, only since 1866, Italians. For most of that long time they governed themselves and lived from their pastures, their forests, and the ore under their mountains. This is that story, told from the rock up: who ruled the valley, how it decided things, and how its people earned their bread.</p>
+      <blockquote class="epigraph">
+        Auronzo bella al piano stendentesi lunga tra l'acque, sotto la fosca Ajàrnola.
+        <cite>— Giosuè Carducci, <em>Cadore</em></cite>
+      </blockquote>
+      <!-- EDIT THIS LINE for your reunion: family name, year, place -->
+      <p class="dedication">For the descendants of Auronzo, gathered again.</p>
+    </header>
+
+    <!-- ERA 1 -->
+    <section class="era reveal" id="deeptime">
+      <div class="meta"><span class="eyebrow">The rock &amp; the ice</span><span class="years">before 8000 BCE</span></div>
+      <h2>The valley before anyone</h2>
+      <p>Start with the rock. The pale towers above Auronzo — the Tre Cime, the Marmarole, the Ajarnola — began as a coral reef in a warm, shallow sea about 250 million years ago. Over immense time the reef hardened into dolomite, the old seabed buckled upward, and the peaks were lifted into the shapes you see. The Dolomites are a fossil of that sea, and a UNESCO World Heritage site.</p>
+      <p>The last Ice Age did the final carving. Until roughly twelve thousand years ago glaciers filled these valleys; as they drew back they ground out the broad trough of the Ansiei, left the lakes, and uncovered a land that — for the first time — people could enter.</p>
+    </section>
+
+    <!-- ERA 2 -->
+    <section class="era reveal" id="hunters">
+      <div class="meta"><span class="eyebrow">The first people</span><span class="years">~8000 BCE</span></div>
+      <h2>Hunters in the high pastures</h2>
+      <p>No one owned this land yet, and no one ruled it. The first people here were hunters who climbed up in summer after red deer, ibex, and chamois, and went back down before winter. They carried flint from distant sources to knap their blades — proof that even then these mountains lay on routes of exchange, not at the edge of the world.</p>
+      <p>The clearest trace is just over the ridge, at Mondeval above San Vito di Cadore: the grave of a hunter who died around 7,500 years ago, laid under a great boulder with his tools and ornaments. He is among the oldest people ever found high in the Alps, and he tells us the valleys around Auronzo were lived in long before any town, any lord, or any state.</p>
+      <p class="flag">Mondeval lies in neighbouring San Vito di Cadore, not Auronzo itself — but it is the closest window we have onto who first used these high valleys.</p>
+    </section>
+
+    <!-- ERA 3 -->
+    <section class="era reveal" id="veneti">
+      <div class="meta"><span class="eyebrow">Veneti &amp; Catubrini</span><span class="years">~600–200 BCE</span></div>
+      <h2>A tribe, a herd, a holy place</h2>
+      <p>By the Iron Age the valley belonged to the world of the Veneti, the people of the plain to the south, and to a mountain tribe the Romans later named the Catubrini — a name built from old words for <em>battle</em> and <em>fortress</em>. Cadore takes its name from them.</p>
+      <p>These were not cut-off herders. The Veneti had their own alphabet, and they met at sanctuaries that served as gathering place, court, and market at once. The great one for Cadore stood at Lagole, near today's Calalzo, where for centuries people left inscribed bronze offerings. Authority here was not a king or a capital. It was the clan, the herd, and the shared holy ground.</p>
+      <div class="ledger">
+        <div class="row"><div class="k">Who ruled</div><div class="v">No central power — tribal and clan-based, with sanctuaries as common institutions.</div></div>
+        <div class="row"><div class="k">Living from</div><div class="v">Herding, metalwork, and trade across the Alpine passes between the Veneto plain and the north.</div></div>
+      </div>
+      <p class="flag" style="margin-top:.9rem">Lagole is in Calalzo, a short way down-valley; its bronzes now sit in the archaeological museum at Pieve di Cadore.</p>
+    </section>
+
+    <!-- ERA 4 -->
+    <section class="era reveal" id="rome">
+      <div class="meta"><span class="eyebrow">Under Rome</span><span class="years">2nd c BCE – 5th c CE</span></div>
+      <h2>Rome ruled, but from far off</h2>
+      <p>Rome absorbed the region into its province of Venetia, yet its grip on these mountains was light. Life went on much as before — and so did the old tongue. On Monte Calvario, the hill behind Villagrande in Auronzo itself, people kept writing in the Venetic alphabet into the first century CE, long after the plains had gone over to Latin.</p>
+      <p>That hill held a stepped sanctuary, in use from before the Roman conquest until the fourth or fifth century, where offerings went to a local god, the Maistratores. People earned their living as they long had: herding, cutting timber, and digging lead and silver from the rock. The empire taxed and defended from a distance; the valley handled its own daily affairs.</p>
+      <div class="stone">
+        <div class="lab">Found in Auronzo</div>
+        <p>The sanctuary on Monte Calvario, behind the cemetery at Villagrande, was rediscovered by chance in the 1990s. Its inscriptions are some of the latest Venetic writing known — a sign that here, the old culture outlived the Roman conquest by generations.</p>
+      </div>
+      <div class="ledger">
+        <div class="row"><div class="k">Who ruled</div><div class="v">Rome, through provincial structures — present but remote in the high valleys.</div></div>
+        <div class="row"><div class="k">Living from</div><div class="v">Pasture, timber, and the first organised mining of lead and silver; trade over the passes.</div></div>
+      </div>
+    </section>
+
+    <!-- ERA 5 -->
+    <section class="era reveal" id="patriarch">
+      <div class="meta"><span class="eyebrow">The Patriarch's land</span><span class="years">5th c – 1335</span></div>
+      <h2>A faraway church-prince, a local lord, and the villages underneath</h2>
+      <p>When Rome fell, the faith stayed and the structure changed. Christianity reached Cadore from the Patriarchate of Aquileia, the great church-state of Friuli; Pieve di Cadore became the mother parish — its name, <em>pieve</em>, means exactly that. In 1077 the Emperor granted the Patriarch of Aquileia worldly power, and Cadore became, in law, the Patriarch's land.</p>
+      <p>Day to day, a distant church-prince was barely a ruler. The Patriarch held Cadore through a noble family, the da Camino, who governed it as his vassals and collected its dues until 1335. Beneath that feudal arrangement the villages were already running themselves: each had its <em>Regola</em>, an assembly of the founding households that owned the woods, pastures, and water in common and decided their use together. The commons came first; the lord sat on top of them.</p>
+      <div class="ledger">
+        <div class="row"><div class="k">Who ruled</div><div class="v">The Patriarch of Aquileia in name; the da Camino family in practice; the village Regola over the local commons.</div></div>
+        <div class="row"><div class="k">Living from</div><div class="v">Subsistence farming and herding, forest, and small-scale mining — much of it on land held collectively.</div></div>
+      </div>
+    </section>
+
+    <!-- ERA 6 -->
+    <section class="era reveal" id="statutes">
+      <div class="meta"><span class="eyebrow">The Statutes of 1338</span><span class="years">1338–1420</span></div>
+      <h2>A community of villages writes its own law</h2>
+      <p>In 1335 the last da Camino lord died suddenly, and the villages took their chance. In 1338 they put it in writing: the Statutes of Cadore, a charter that joined twenty-seven village Regole into one self-governing body — the Magnifica Comunità di Cadore. This is the institution behind "all those Cadore towns." Auronzo was one member village; Pieve di Cadore was the capital, where the council sat.</p>
+      <p>How it worked was strikingly modern. The twenty-seven Regole were grouped into ten districts, the Centenari. Each district elected and swore in two representatives to a "Greater and General Council." Serving was compulsory — miss a session without good cause and you were fined. The Patriarch stayed the nominal sovereign and recognised the charter in 1347, but from now on the valley made its own laws and ran its own affairs. It would keep doing so for nearly five hundred years.</p>
+      <div class="stone">
+        <div class="lab">Why so many town names</div>
+        <p>Cadore was a federation, not a single town. When this history keeps naming Pieve, Lozzo, Vigo, Domegge, San Vito — and Auronzo — it is naming member villages of one community. Long before modern states, these mountain villages had worked out, in their own way, how to own and run a forest together.</p>
+      </div>
+      <div class="ledger">
+        <div class="row"><div class="k">Who ruled</div><div class="v">The valley itself — an elected Greater and General Council under written statutes, with the Patriarch as distant overlord.</div></div>
+        <div class="row"><div class="k">Living from</div><div class="v">Common pastures and forests managed by the Regole; herding, timber, and mining.</div></div>
+      </div>
+    </section>
+
+    <!-- ERA 7 -->
+    <section class="era reveal" id="venice">
+      <div class="meta"><span class="eyebrow">Under Venice</span><span class="years">1420–1797</span></div>
+      <h2>The valley chooses a protector</h2>
+      <p>By 1420 the Patriarchate was collapsing, and Cadore picked a new protector: the Republic of Venice. The choice was deliberate and the terms were easy. Venice took sovereignty but let the Magnifica Comunità keep its statutes and self-rule; a Venetian official sat above the council without replacing it.</p>
+      <p>What Venice wanted was wood. Cadore's forests became a strategic supply for the Venetian Arsenal — beams, oars, and ship timber — floated down the Piave on rafts, the <em>zattere</em>. Lead, zinc, and silver came out of the Argentiera mine up the Ansiei. And the valley sent Venice something else: a boy from Pieve di Cadore named Tiziano Vecellio — Titian — who became the greatest painter of the Republic. For three and a half centuries Auronzo lived under the winged lion, comfortable by mountain standards and still largely its own master.</p>
+      <div class="ledger">
+        <div class="row"><div class="k">Who ruled</div><div class="v">Venice held sovereignty; the Magnifica Comunità kept its statutes and ran the valley's internal life.</div></div>
+        <div class="row"><div class="k">Living from</div><div class="v">Timber for the Venetian fleet, floated down the Piave; the Argentiera lead-zinc-silver mine; pasture and wool.</div></div>
+      </div>
+    </section>
+
+    <!-- ERA 8 -->
+    <section class="era reveal" id="empires">
+      <div class="meta"><span class="eyebrow">Empires &amp; borders</span><span class="years">1797–1866</span></div>
+      <h2>The self-governing valley is abolished</h2>
+      <p>The end came from outside. In 1797 Napoleon handed the dying Republic of Venice to Austria; a few years later the same lands passed to his own Kingdom of Italy. In 1807 his administrators did what five centuries had not: they abolished the Magnifica Comunità and the Regole and replaced them with modern municipalities — nineteen <em>comuni</em>, grouped into the cantons of Auronzo and Pieve. The valley's old self-government was gone, and the common lands were handed to the new town councils.</p>
+      <p>After Napoleon fell, Austria took the region back and held it, as part of the Kingdom of Lombardy-Venetia, until 1866. For the people of Auronzo this run of empires and redrawn borders mattered less for which flag flew than for what had quietly been lost beneath it: the right to govern themselves by their own law.</p>
+      <div class="stone ore">
+        <div class="lab">The real break</div>
+        <p>If you are looking for the moment the old Cadore ended, it is 1807 — not the Italian unification that came later. Napoleon's pen, not Italy's, closed the five-hundred-year republic of villages.</p>
+      </div>
+    </section>
+
+    <!-- ERA 9 -->
+    <section class="era reveal" id="italy">
+      <div class="meta"><span class="eyebrow">Into Italy — and out into the world</span><span class="years">1866–1914</span></div>
+      <h2>Becoming Italian, and leaving</h2>
+      <p>On 21 October 1866 a plebiscite joined the Veneto, and with it the main body of Cadore, to the Kingdom of Italy; in Auronzo the first council under Italian law met that same month, once the Austrian troops had withdrawn. "Becoming Italian" is this recent. The Magnifica Comunità was revived in 1875 — but only as a cultural body now, keeper of the valley's memory, not its government.</p>
+      <div class="stone">
+        <div class="lab">When did Auronzo become Italian?</div>
+        <p>In 1866 — but not all of Ladinia joined with it. The new border ran along the peaks just north of the town, and the Ladin communities a few valleys over — Cortina d'Ampezzo, Livinallongo, Colle Santa Lucia — stayed Austrian for another fifty years. They became Italian only after the First World War, by the Treaty of Saint-Germain (1919) and the transfer of 1920. The frontier cut straight through Ladin country, with Auronzo pressed against its southern edge. That is why, in 1915, the war opened on Auronzo's own mountains.</p>
+      </div>
+      <p>Italy did not make the mountains richer. The land was poor, the families large, and work was scarce. So Auronzo did what much of Cadore did: it left. Through the late nineteenth and twentieth centuries its people went out as woodcutters, miners, and stonemasons, and above all as <em>gelatieri</em> — ice-cream makers who opened shops across Austria, Germany, the Netherlands, and on to the Americas, with Argentina a common destination. They sent money home and came back in summer. While the men were gone — in the forests all winter, behind a counter abroad for the season — the farms, the animals, and the children were the women's to keep. The reunion this site was made for is part of that history: a family scattered by the same hard valley it still calls home.</p>
+      <div class="ledger">
+        <div class="row"><div class="k">Who ruled</div><div class="v">The Kingdom of Italy, through ordinary <em>comuni</em>; the Magnifica survived only as a heritage body.</div></div>
+        <div class="row"><div class="k">Living from</div><div class="v">A thin mountain economy of mining and timber — and, increasingly, wages sent home by emigrants abroad.</div></div>
+      </div>
+      <p class="flag" style="margin-top:.9rem">The gelatieri story belongs to Cadore and the wider Belluno mountains as a whole; Auronzo shared fully in it.</p>
+    </section>
+
+    <!-- ERA 10 -->
+    <section class="era reveal" id="war">
+      <div class="meta"><span class="eyebrow">The mountains at war</span><span class="years">1915–1918</span></div>
+      <h2>A front line on the peaks</h2>
+      <p>From 1915 to 1918 the border running along the peaks above Auronzo became a front. Italy and Austria-Hungary fought across the Dolomites, and the valley turned into a vast supply base — roads, depots, and mule tracks built to feed the fighting on Monte Piana, the Tre Cime, and Forcella Giralba.</p>
+      <p>On Monte Piana alone, over two years, roughly fourteen thousand men died for a flat-topped hill that changed hands almost not at all. The first to fall, hours after war was declared on 24 May 1915, were two <em>alpini</em> of the Pieve di Cadore battalion — local men. The trenches and rock tunnels are still there, now an open-air museum. It is the nearest this self-governing, hard-working valley ever came to being destroyed.</p>
+    </section>
+
+    <!-- ERA 11 -->
+    <section class="era reveal" id="fascism">
+      <div class="meta"><span class="eyebrow">Between the wars</span><span class="years">1918–1943</span></div>
+      <h2>The valley under Mussolini</h2>
+      <p>After the war came the regime, and with it two changes to the valley. In 1932 a dam across the Ansiei drowned the valley floor to make the lake of Santa Caterina — built for hydroelectric power, it became the centre of a tourism the Fascist state encouraged. The state also found a use for the killing-grounds above the town: it organised pilgrimages up to Monte Piana and the Tre Cime, sending veterans, families, and schoolchildren to venerate the war dead as a national rite.</p>
+      <p>Sanctions after the 1935 invasion of Ethiopia pushed Italy onto its own resources, and the old lead and zinc mines drew fresh interest. The mountains were soon armed again, too. When Hitler annexed Austria in 1938, Mussolini's Germany now sat just over the northern ridge — and Mussolini did not trust it. Between 1939 and 1942 his engineers cut tunnels and gun positions into the rock at Cima Gogna, the gateway to the Ansiei valley, part of a fortified line aimed at the ally to the north. The guns were never fully installed.</p>
+      <div class="stone ore">
+        <div class="lab">Linea non mi fido</div>
+        <p>The people of Auronzo had a name for the fortifications Mussolini was building against his own German ally: the "Line I don't trust." They read the alliance more clearly than the regime did.</p>
+      </div>
+    </section>
+
+    <!-- ERA 12 -->
+    <section class="era reveal" id="occupation">
+      <div class="meta"><span class="eyebrow">Occupation &amp; Resistance</span><span class="years">1943–1945</span></div>
+      <h2>Foreign rule, and the fight against it</h2>
+      <p>When Italy surrendered in September 1943, Belluno did not pass to Mussolini's puppet republic. Germany took the province directly, folding it into a zone run from Tyrol and meant for the Reich. For a valley that had been securely Italian only since 1866, German rule felt like foreign occupation — and the resistance to it was hard.</p>
+      <p>Belluno raised one of Italy's strongest partisan movements. Fighters of the Garibaldi division named for Nino Nannetti, and the Calvi brigade in Cadore and Comelico, held the high villages and the mountains while the Germans held the valley floor and the larger towns from Auronzo to Cortina. The reprisals were brutal. Women carried messages, food, and weapons through the clandestine women's defence groups — the valley's work again falling, as it always had, to those who stayed.</p>
+      <div class="stone ore">
+        <div class="lab">The price, across the province</div>
+        <p>When Belluno received Italy's gold medal for military valour in 1947, the citation counted the cost: 86 hanged, 277 shot, 7 burned alive, 11 dead under torture, 564 fallen in combat, 1,667 deported, 7,000 interned.</p>
+      </div>
+    </section>
+
+    <!-- ERA 13 -->
+    <section class="era reveal" id="exodus">
+      <div class="meta"><span class="eyebrow">The valley empties</span><span class="years">1945–1970s</span></div>
+      <h2>Turin, Fiat, and the long leaving</h2>
+      <p>Peace did not stop the leaving; it changed where people went. Through the 1950s and 1960s, while northern Italy boomed, the mountains drained toward the factory cities — Milan, and above all Turin and Fiat. For a young person in Auronzo the choice was stark: stay for a thinning life of pasture, small workshops, and seasonal work, or take a wage on an assembly line in a city. Many took the wage. Auronzo had held around 4,500 people in the late 1800s; over the following century it lost roughly a third.</p>
+      <p>Then, just down the valley, came the decade's catastrophe. On the night of 9 October 1963 a mountainside slid into the reservoir behind the new Vajont dam and threw a wave over the top that erased the town of Longarone and killed about 1,900 people. The dam itself stood: the disaster was made by the men who had built a reservoir against the warnings of the rock. Longarone was the Piave's down-valley heart — home of the timber rafts and of many emigrant families — and its destruction marked the decade for everyone upstream, Auronzo included.</p>
+    </section>
+
+    <!-- ERA 14 -->
+    <section class="era reveal" id="trades">
+      <div class="meta"><span class="eyebrow">Glasses, and visitors</span><span class="years">1960s–today</span></div>
+      <h2>A new trade and an old mountain</h2>
+      <p>What finally gave people a reason to stay was a new trade and an old mountain. By then the old livings were ending — the Argentiera mine closed in 1971, and timber had long since stopped floating down the Piave. The new trade was eyeglasses. Cadore had made spectacles since 1878, when the first Italian eyewear factory opened just down-valley at Calalzo — at first a web of small workshops assembling frames, a successor to the valley's metalworking and an alternative to emigration. From it grew giants: Safilo, descended from that Calalzo factory, and Luxottica, founded in 1961 at Agordo by Leonardo Del Vecchio, who had learned the trade at a firm in Venas di Cadore. The province of Belluno became, and remains, the centre of the world's eyewear industry; Auronzo's own frame-makers, clustered at Cima Gogna, were part of it.</p>
+      <p>The old mountain was the Tre Cime di Lavaredo. The lake made in 1932, the resort at Misurina, the skiing, and above all the three great towers drew visitors from everywhere, and tourism became the valley's other living. Together, glasses and visitors did what timber and ore once had: they let a person grow up in Auronzo and work there.</p>
+      <div class="ledger">
+        <div class="row"><div class="k">Who ruled</div><div class="v">The Italian Republic, through the comune of Auronzo.</div></div>
+        <div class="row"><div class="k">Living from</div><div class="v">Eyewear factories and tourism — the modern successors to timber, mining, and the emigrant trades.</div></div>
+      </div>
+    </section>
+
+    <!-- THREAD: WOMEN -->
+    <section class="era reveal thematic" id="women">
+      <div class="meta"><span class="eyebrow">A thread through every era</span></div>
+      <h2>The valley run by women</h2>
+      <p>The men of Auronzo were forever leaving. They left for the winter forests, for the mines, for the front, and most of all for the emigrant seasons abroad, selling ice cream across Austria, Germany, and the Americas. The work that held the valley together while they were gone was women's.</p>
+      <p>Women ran the farms and the animals, cut and carried the hay, and worked the high summer pastures — driving the cattle up to the <em>malghe</em> above the valley, where the milk became the butter and cheese that fed the year. When the men were at war, or in a German mine, or behind a gelato counter in Frankfurt, the household, the land, and the children were the woman's to keep. They worked the other trades too: the mine contract of 1886 hired, alongside the men, forty to sixty women to sort the ore by hand; when eyewear came, the assembly benches filled largely with women; when tourism came, so did the kitchens and the hotels.</p>
+      <p>The valley's story is usually told through its men's trades — the woodcutter, the miner, the soldier, the emigrant. It was as much the story of the women who stayed.</p>
+    </section>
+
+    <!-- ERA: NOW -->
+    <section class="era reveal" id="now">
+      <div class="meta"><span class="eyebrow">The valley now</span><span class="years">today</span></div>
+      <h2>What remains</h2>
+      <p>Two things from the long story have survived into the present. The Regole still exist: reconstituted in 1996, the Magnifiche Regole of Villagrande and Villapiccola again own and manage some fifteen thousand hectares of Auronzo's land in common, exactly as their medieval ancestors did. The oldest layer of all — villages owning a forest together — is also the one still standing.</p>
+      <p>And the language holds on. Ladin, the mountain Romance speech of Cadore, keeps its rolled plurals (<em>omis</em>, <em>femenes</em>) and words older than Rome (<em>troi</em>, a path; <em>roa</em>, a landslide). To speak it, or to carry a name from these villages, is to belong to a place that was its own for far longer than it has been anyone else's.</p>
+    </section>
+
+    <!-- KIDS' TRIPTYCH -->
+    <section class="kids reveal" id="kids">
+      <div class="head">
+        <p class="tag">For younger readers</p>
+        <h2>Daily life in the valley — three eras</h2>
+        <p>The same valley, three different ways of being governed. Watch who is in charge change from picture to picture — that change is the whole story.</p>
+      </div>
+      <div class="panels">
+
+        <!-- PANEL A: ROME -->
+        <figure class="panel">
+          <svg viewBox="0 0 400 300" role="img" aria-labelledby="aT aD">
+            <title id="aT">Daily life in the valley under Rome</title>
+            <desc id="aD">A mountain valley with a river. A shepherd with sheep, a mule on a path, a miner, and a small stepped shrine on a hill where a person leaves an offering.</desc>
+            <rect width="400" height="300" fill="#eef2ee"/>
+            <rect width="400" height="170" fill="#dfe7e6"/>
+            <circle cx="58" cy="48" r="20" fill="#f0d9a8"/>
+            <!-- Tre Cime -->
+            <polygon points="120,150 150,52 180,150" fill="#cfcabb"/>
+            <polygon points="170,150 205,42 240,150" fill="#c4bfae"/>
+            <polygon points="228,150 258,60 288,150" fill="#cfcabb"/>
+            <polygon points="148,70 150,52 162,84" fill="#fff" opacity=".7"/>
+            <polygon points="203,60 205,42 216,80" fill="#fff" opacity=".75"/>
+            <!-- valley floor -->
+            <path d="M0 150 H400 V300 H0 Z" fill="#cdd7b6"/>
+            <!-- river -->
+            <path d="M0 250 Q120 230 200 250 T400 244 V300 H0 Z" fill="#7fb4b6"/>
+            <path d="M0 250 Q120 230 200 250 T400 244" fill="none" stroke="#5d9799" stroke-width="2"/>
+            <!-- shrine hill -->
+            <path d="M300 150 q40 -2 70 0 q-6 -36 -36 -36 q-26 0 -34 36 Z" fill="#bcae8c"/>
+            <!-- stepped sanctuary -->
+            <rect x="322" y="120" width="34" height="6" fill="#9c9270"/>
+            <rect x="326" y="113" width="26" height="6" fill="#aa9f79"/>
+            <rect x="330" y="106" width="18" height="6" fill="#9c9270"/>
+            <rect x="336" y="98" width="8" height="9" fill="#857a59"/>
+            <circle cx="316" cy="124" r="4" fill="#3f4a48"/>
+            <!-- shepherd + sheep -->
+            <circle cx="70" cy="206" r="6" fill="#3f4a48"/><rect x="67" y="212" width="6" height="14" fill="#5a6a55"/>
+            <line x1="76" y1="200" x2="76" y2="228" stroke="#7a6a4a" stroke-width="2"/>
+            <ellipse cx="100" cy="224" rx="11" ry="7" fill="#efeee6"/><circle cx="110" cy="222" r="4" fill="#cfcabb"/>
+            <ellipse cx="124" cy="230" rx="11" ry="7" fill="#efeee6"/><circle cx="134" cy="228" r="4" fill="#cfcabb"/>
+            <!-- mule + path -->
+            <path d="M200 196 q40 8 96 -8" fill="none" stroke="#c9bd97" stroke-width="6" stroke-linecap="round"/>
+            <ellipse cx="244" cy="190" rx="13" ry="7" fill="#6b5a44"/><rect x="240" y="184" width="12" height="6" fill="#8a795a"/>
+            <line x1="233" y1="194" x2="231" y2="202" stroke="#6b5a44" stroke-width="2"/><line x1="256" y1="194" x2="258" y2="202" stroke="#6b5a44" stroke-width="2"/>
+            <!-- miner + ore opening -->
+            <path d="M40 170 a14 14 0 0 1 28 0 Z" fill="#3a3530"/>
+            <circle cx="74" cy="168" r="5" fill="#3f4a48"/><rect x="71" y="173" width="6" height="11" fill="#6a5e4a"/>
+            <line x1="78" y1="166" x2="86" y2="160" stroke="#7a6a4a" stroke-width="2"/>
+            <!-- callouts -->
+            <g font-family="system-ui,sans-serif" font-size="9" fill="#2b3230">
+              <line x1="316" y1="100" x2="300" y2="86" stroke="#8c4a2f" stroke-width="1"/>
+              <text x="232" y="82">a hilltop shrine</text>
+              <line x1="116" y1="216" x2="120" y2="240" stroke="#1e6f74" stroke-width="1"/>
+              <text x="92" y="254">herding</text>
+              <line x1="54" y1="170" x2="48" y2="158" stroke="#1e6f74" stroke-width="1"/>
+              <text x="14" y="152">digging ore</text>
+            </g>
+          </svg>
+          <figcaption class="body">
+            <p class="when">Under Rome</p>
+            <p class="yrs">about 2,000 years ago</p>
+            <p class="cap">Most people herded sheep and goats, cut wood, and dug lead and silver from the rock. Mules carried goods over the passes. On a little hill, people left gifts for their own gods and wrote in an old alphabet.</p>
+            <p class="boss"><b>Who was in charge</b>Rome — but from very far away. The valley mostly ran itself.</p>
+          </figcaption>
+        </figure>
+
+        <!-- PANEL B: PATRIARCH -->
+        <figure class="panel">
+          <svg viewBox="0 0 400 300" role="img" aria-labelledby="bT bD">
+            <title id="bT">Daily life in the valley under the Patriarch</title>
+            <desc id="bD">The same valley with a lord's stone tower on a crag, a villager handing over taxes, a faraway church symbol, and villagers meeting at a tree.</desc>
+            <rect width="400" height="300" fill="#eef2ee"/>
+            <rect width="400" height="170" fill="#dfe7e6"/>
+            <polygon points="120,150 150,52 180,150" fill="#cfcabb"/>
+            <polygon points="170,150 205,42 240,150" fill="#c4bfae"/>
+            <polygon points="228,150 258,60 288,150" fill="#cfcabb"/>
+            <polygon points="203,60 205,42 216,80" fill="#fff" opacity=".75"/>
+            <path d="M0 150 H400 V300 H0 Z" fill="#cdd7b6"/>
+            <path d="M0 250 Q120 232 200 250 T400 244 V300 H0 Z" fill="#7fb4b6"/>
+            <path d="M0 250 Q120 232 200 250 T400 244" fill="none" stroke="#5d9799" stroke-width="2"/>
+            <!-- far-off church / patriarch -->
+            <g opacity=".9">
+              <rect x="350" y="38" width="20" height="26" fill="#c9c2b0"/>
+              <polygon points="350,38 360,22 370,38" fill="#b7ad94"/>
+              <line x1="360" y1="22" x2="360" y2="12" stroke="#8c4a2f" stroke-width="2"/>
+              <line x1="356" y1="16" x2="364" y2="16" stroke="#8c4a2f" stroke-width="2"/>
+            </g>
+            <!-- lord's tower on crag -->
+            <path d="M250 150 q30 0 56 0 q-4 -30 -28 -30 q-24 0 -28 30 Z" fill="#b3a585"/>
+            <rect x="266" y="92" width="26" height="42" fill="#9a8f72"/>
+            <rect x="266" y="86" width="6" height="8" fill="#9a8f72"/><rect x="276" y="86" width="6" height="8" fill="#9a8f72"/><rect x="286" y="86" width="6" height="8" fill="#9a8f72"/>
+            <rect x="274" y="108" width="10" height="16" fill="#4a4338"/>
+            <!-- lord + villager handing tax -->
+            <circle cx="250" cy="160" r="6" fill="#5a3c2c"/><rect x="247" y="166" width="6" height="14" fill="#8c4a2f"/>
+            <circle cx="214" cy="166" r="6" fill="#3f4a48"/><rect x="211" y="172" width="6" height="13" fill="#5a6a55"/>
+            <rect x="226" y="168" width="8" height="6" fill="#caa53c"/>
+            <!-- village meeting at a tree (the Regola) -->
+            <rect x="86" y="196" width="6" height="22" fill="#6a5a44"/>
+            <ellipse cx="89" cy="190" rx="20" ry="16" fill="#4c5a43"/>
+            <circle cx="64" cy="224" r="5" fill="#3f4a48"/><circle cx="78" cy="228" r="5" fill="#3f4a48"/><circle cx="100" cy="228" r="5" fill="#3f4a48"/><circle cx="114" cy="224" r="5" fill="#3f4a48"/>
+            <!-- logs -->
+            <g stroke="#7a6a4a" stroke-width="5" stroke-linecap="round"><line x1="150" y1="244" x2="178" y2="240"/><line x1="150" y1="252" x2="178" y2="248"/></g>
+            <g font-family="system-ui,sans-serif" font-size="9" fill="#2b3230">
+              <line x1="360" y1="40" x2="352" y2="58" stroke="#8c4a2f" stroke-width="1"/>
+              <text x="300" y="78">far-off Patriarch</text>
+              <line x1="280" y1="92" x2="290" y2="74" stroke="#8c4a2f" stroke-width="1"/>
+              <text x="262" y="70">the lord's tower</text>
+              <line x1="89" y1="206" x2="89" y2="172" stroke="#1e6f74" stroke-width="1"/>
+              <text x="40" y="166">the village meets</text>
+            </g>
+          </svg>
+          <figcaption class="body">
+            <p class="when">Under the Patriarch</p>
+            <p class="yrs">about 1,000 to 700 years ago</p>
+            <p class="cap">A church-prince far away in Friuli was the boss in name, and a local lord's family — the da Camino — collected the taxes. But each village already shared its woods and pastures, deciding together in its own meeting, the Regola.</p>
+            <p class="boss"><b>Who was in charge</b>A faraway patriarch, through a local lord — while the villages quietly ran their own land.</p>
+          </figcaption>
+        </figure>
+
+        <!-- PANEL C: AFTER 1338 -->
+        <figure class="panel">
+          <svg viewBox="0 0 400 300" role="img" aria-labelledby="cT cD">
+            <title id="cT">Daily life in the valley after 1338</title>
+            <desc id="cD">The same valley with a bell tower ringing, a row of small village houses joined by a path, people seated in a council, and a scroll of laws.</desc>
+            <rect width="400" height="300" fill="#eef2ee"/>
+            <rect width="400" height="170" fill="#dfe7e6"/>
+            <polygon points="120,150 150,52 180,150" fill="#cfcabb"/>
+            <polygon points="170,150 205,42 240,150" fill="#c4bfae"/>
+            <polygon points="228,150 258,60 288,150" fill="#cfcabb"/>
+            <polygon points="203,60 205,42 216,80" fill="#fff" opacity=".75"/>
+            <path d="M0 150 H400 V300 H0 Z" fill="#cdd7b6"/>
+            <path d="M0 256 Q120 240 200 256 T400 250 V300 H0 Z" fill="#7fb4b6"/>
+            <path d="M0 256 Q120 240 200 256 T400 250" fill="none" stroke="#5d9799" stroke-width="2"/>
+            <!-- bell tower -->
+            <rect x="40" y="96" width="26" height="62" fill="#c9c2b0"/>
+            <polygon points="38,96 53,72 68,96" fill="#8c4a2f"/>
+            <path d="M48 112 a5 5 0 0 1 10 0 v8 h-10 Z" fill="#caa53c"/>
+            <g stroke="#caa53c" stroke-width="1.5"><line x1="30" y1="92" x2="40" y2="100"/><line x1="76" y1="92" x2="66" y2="100"/></g>
+            <!-- 27 villages: a row of little houses joined by a path -->
+            <path d="M120 150 q90 22 250 0" fill="none" stroke="#c9bd97" stroke-width="5" stroke-linecap="round"/>
+            <g>
+              <g transform="translate(150,138)"><rect x="0" y="4" width="14" height="10" fill="#b9ac8b"/><polygon points="-1,4 7,-3 15,4" fill="#8a795a"/></g>
+              <g transform="translate(196,146)"><rect x="0" y="4" width="14" height="10" fill="#b9ac8b"/><polygon points="-1,4 7,-3 15,4" fill="#8a795a"/></g>
+              <g transform="translate(244,150)"><rect x="0" y="4" width="14" height="10" fill="#b9ac8b"/><polygon points="-1,4 7,-3 15,4" fill="#8a795a"/></g>
+              <g transform="translate(292,146)"><rect x="0" y="4" width="14" height="10" fill="#b9ac8b"/><polygon points="-1,4 7,-3 15,4" fill="#8a795a"/></g>
+              <g transform="translate(338,138)"><rect x="0" y="4" width="14" height="10" fill="#b9ac8b"/><polygon points="-1,4 7,-3 15,4" fill="#8a795a"/></g>
+            </g>
+            <!-- the council: people around, with a scroll -->
+            <g fill="#3f4a48">
+              <circle cx="165" cy="206" r="6"/><circle cx="190" cy="216" r="6"/><circle cx="215" cy="220" r="6"/><circle cx="240" cy="216" r="6"/><circle cx="262" cy="206" r="6"/>
+            </g>
+            <g fill="#5a6a55"><rect x="162" y="212" width="6" height="12"/><rect x="187" y="222" width="6" height="12"/><rect x="212" y="226" width="6" height="12"/><rect x="237" y="222" width="6" height="12"/><rect x="259" y="212" width="6" height="12"/></g>
+            <!-- scroll of statutes -->
+            <g transform="translate(196,236)">
+              <rect x="0" y="0" width="34" height="22" rx="2" fill="#f1ead4" stroke="#b7ad94"/>
+              <line x1="5" y1="6" x2="29" y2="6" stroke="#8c4a2f" stroke-width="1"/>
+              <line x1="5" y1="11" x2="29" y2="11" stroke="#9a8f72" stroke-width="1"/>
+              <line x1="5" y1="16" x2="22" y2="16" stroke="#9a8f72" stroke-width="1"/>
+            </g>
+            <g font-family="system-ui,sans-serif" font-size="9" fill="#2b3230">
+              <line x1="53" y1="98" x2="60" y2="80" stroke="#8c4a2f" stroke-width="1"/>
+              <text x="42" y="76">a bell calls the meeting</text>
+              <line x1="244" y1="150" x2="250" y2="120" stroke="#1e6f74" stroke-width="1"/>
+              <text x="206" y="116">27 villages join</text>
+              <line x1="213" y1="248" x2="150" y2="270" stroke="#1e6f74" stroke-width="1"/>
+              <text x="120" y="284">they write their own laws</text>
+            </g>
+          </svg>
+          <figcaption class="body">
+            <p class="when">After 1338</p>
+            <p class="yrs">about 700 years ago</p>
+            <p class="cap">The villages joined together and wrote their own laws — the Statutes of 1338. Two elected people from each district met in Pieve to decide things, and a bell rang to call them in. They governed themselves like this for about 500 years.</p>
+            <p class="boss"><b>Who was in charge</b>The valley itself. Twenty-seven villages, one set of laws, made by people they chose.</p>
+          </figcaption>
+        </figure>
+
+      </div>
+    </section>
+
+    <!-- SOURCES -->
+    <section class="sources reveal" id="sources">
+      <p class="eyebrow">The record</p>
+      <h2>Where this history comes from</h2>
+      <p>This account draws on sources in Italian, German, English, and Ladin: the Magnifica Comunità di Cadore and its statutes, local archaeology, museum collections, mineralogical records, and regional histories. Where Auronzo's own record is thin, it leans on the broader history of Cadore and the Belluno mountains — those passages are flagged in the text above.</p>
+      <ul>
+        <li>Magnifica Comunità di Cadore — official body and its history of the Cadore statutes (1338) and Regole.</li>
+        <li>Gruppo Archeologico Cadorino (archeocadore.it) — the Monte Calvario sanctuary in Auronzo and the wider archaeology of the valley.</li>
+        <li>Museo Vittorino Cazzetta, Selva di Cadore — the Mesolithic burial at Mondeval.</li>
+        <li>MARC, Museo Archeologico Cadorino, Pieve di Cadore — the Venetic votive bronzes from Lagole (Calalzo).</li>
+        <li>Mindat and regional mining surveys — the Argentiera lead–zinc–silver mine on the Ansiei and the Salafossa mine.</li>
+        <li>Museo degli Zattieri (Codissago, Longarone) and the cìdolo museum (Perarolo) — the timber rafts and the log drives down the Piave.</li>
+        <li>Histories of the Dolomite front, 1915–1918 — Monte Piana and the Tre Cime; the Auronzo civic museum at Palazzo Corte Metto (Great War and mining sections).</li>
+        <li>Accounts of the Operationszone Alpenvorland and the Belluno Resistance — the Garibaldi division "Nino Nannetti" and the province's 1947 gold medal citation.</li>
+        <li>Histories of the Italian eyewear industry — the 1878 Calalzo factory, Safilo, and Luxottica; the Museo dell'Occhiale, Pieve di Cadore.</li>
+        <li>Studies of postwar mountain depopulation and the Vajont disaster (9 October 1963).</li>
+        <li>Studies of Ladin and the Cadorino dialect; accounts of Cadore and Belluno emigration and the <em>gelatieri</em>; work on women's labour in the Belluno mountains (e.g. Vendramini).</li>
+        <li>Patriarchate of Aquileia and the Patria del Friuli — the medieval church-state that held Cadore.</li>
+      </ul>
+      <p class="colophon">A note on accuracy: dates for the deepest past are approximate and debated; the figure of about 14,000 dead on Monte Piana, and the roughly 1,900 killed at Vajont, are the commonly cited estimates, with some sources giving higher numbers; the fairness of the 1866 plebiscite has itself been contested by some Veneto historians. Much of the 20th-century economic and social story — the eyewear industry, the partisan movement, the boom-years emigration to Turin — is documented at the Cadore and Belluno level and applied to Auronzo, which is flagged in the text; Auronzo's own record is firmest for mining, the 1932 dam, the Great War front, and its population figures. Corrections from family members who know the local record are welcome — this is a living page.</p>
+    </section>
+
+  </main>
+</div>
+</div>
+
+<footer>
+  <div class="shell">
+    <span>Auronzo di Cadore · Aurònzo · a family history</span>
+    <span><a href="#top">Back to the top ↑</a></span>
+  </div>
+</footer>
+
+<script>
+  // active stratum + reveal on scroll
+  (function(){
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var sections = Array.prototype.slice.call(document.querySelectorAll('.era[id]'));
+    var railLinks = {};
+    document.querySelectorAll('.stratum').forEach(function(a){
+      var id = a.getAttribute('href').slice(1); railLinks[id] = a;
+    });
+
+    // reveal
+    var revealEls = document.querySelectorAll('.reveal');
+    if(reduce){ revealEls.forEach(function(el){el.classList.add('in');}); }
+    else {
+      var ro = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target); } });
+      }, {rootMargin:'0px 0px -12% 0px', threshold:0.08});
+      revealEls.forEach(function(el){ ro.observe(el); });
+    }
+
+    // scroll-spy for the rail
+    var current = null;
+    var so = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var id = e.target.id;
+          if(current && railLinks[current]) railLinks[current].classList.remove('active');
+          if(railLinks[id]){ railLinks[id].classList.add('active'); current = id; }
+        }
+      });
+    }, {rootMargin:'-45% 0px -50% 0px', threshold:0});
+    sections.forEach(function(s){ so.observe(s); });
+
+    // close mobile contents on click
+    document.querySelectorAll('.topbar .menu a').forEach(function(a){
+      a.addEventListener('click', function(){ var d=document.querySelector('.topbar details'); if(d) d.open=false; });
+    });
+  })();
+</script>
+</body>
+</html>
